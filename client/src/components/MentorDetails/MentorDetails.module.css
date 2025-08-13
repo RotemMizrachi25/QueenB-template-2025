@@ -1,0 +1,97 @@
+/* client/src/components/MentorDetails/MentorDetails.module.css */
+
+.backdrop{
+    position:fixed; inset:0; background:rgba(0,0,0,.35);
+    display:flex; align-items:center; justify-content:center; padding:20px; z-index:50;
+}
+
+/* Base grid uses AREAS so we can flip by class (.rtl/.ltr) */
+.panel{
+    position:relative;
+    width:clamp(320px, 92vw, 860px);
+    background:var(--card-bg,#fff);
+    border:1px solid var(--border,#f1d3da);
+    border-radius:20px;
+    box-shadow:0 12px 34px rgba(0,0,0,.12);
+    padding:18px 20px;
+    display:grid;
+    gap:18px;
+    align-items:start;
+}
+
+/* RTL layout (default for us): image RIGHT, content LEFT */
+.rtl{
+    grid-template-columns: 1fr 220px;
+    grid-template-areas: "content avatar";
+}
+
+/* LTR layout: image LEFT, content RIGHT */
+.ltr{
+    grid-template-columns: 220px 1fr;
+    grid-template-areas: "avatar content";
+}
+
+/* Tablet/Mobile: image on top, content below (both layouts) */
+@media (max-width: 1024px){
+    .rtl, .ltr{
+        grid-template-columns: 1fr;
+        grid-template-areas:
+      "avatar"
+      "content";
+        width:min(96vw, 560px);
+        padding:16px;
+    }
+}
+
+.avatar{
+    grid-area:avatar;
+    width:220px; height:220px;
+    border-radius:16px; object-fit:cover; background:#f6f6f6;
+    justify-self:end;       /* hug the outer edge in RTL (right) */
+}
+
+/* When layout is LTR, put avatar on the outer LEFT edge */
+.ltr .avatar{ justify-self:start; }
+
+@media (max-width: 1024px){
+    .avatar{ width:160px; height:160px; justify-self:center; }
+}
+
+.content{ grid-area:content; max-width:560px; align-self:start; }
+.nameRow{ display:flex; align-items:center; gap:8px; }
+
+.name  { font-family:"Heebo",Roboto,Arial,sans-serif; font-weight:900; font-size:2rem; margin:0 0 6px; text-align:start; }
+.head  { color:var(--muted,#6b7280); letter-spacing:.02em; margin:0 0 6px; text-align:start; }
+.years { color:var(--muted,#6b7280); font-size:.95rem; margin:0 0 10px; text-align:start; }
+
+.sectionTitle{ font-weight:700; margin:10px 0 6px; text-align:start; color:var(--ink,#1f2937); }
+
+.aboutList{
+    list-style:disc outside;
+    margin:0 0 8px 0; padding:0;
+    text-align:start;
+    padding-inline-start:1.1rem; /* default bullets for LTR */
+}
+/* When dir="rtl" on the <ul>, bullets move to right edge */
+.aboutList[dir="rtl"]{
+    padding-inline-start:0;
+    padding-inline-end:1.1rem;
+}
+
+.contactTitle{ margin-top:14px; font-weight:700; text-align:start; color:var(--ink,#1f2937); }
+
+.row{ display:flex; gap:10px; margin-top:8px; flex-wrap:wrap; }
+.iconBtn{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:40px; height:40px; border-radius:10px;
+    border:1px solid var(--border,#f1d3da); background:#fff;
+    transition:background .15s ease, transform .08s ease, box-shadow .15s ease;
+}
+.iconBtn:hover{ background:var(--pink-100,#ffe4ec); box-shadow:0 4px 12px rgba(0,0,0,.08); }
+.iconBtn:active{ transform:translateY(1px); }
+
+/* Close button inside the card (won’t overlap the crown header) */
+.close{
+    position:absolute; top:12px; inset-inline-end:12px;
+    cursor:pointer; background:transparent; border:none; font-size:18px;
+}

@@ -1,0 +1,28 @@
+/* Example to flip avatar/text columns based on dir */
+.card {
+    display: grid;
+    grid-template-columns: 72px 1fr; /* LTR: avatar LEFT, text RIGHT */
+    gap: 12px;
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid var(--border, #f1d3da);
+    box-shadow: 0 4px 14px rgba(0,0,0,.08);
+    padding: 14px;
+    transition: transform .12s ease, box-shadow .12s ease;
+}
+.card:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0,0,0,.12); }
+
+/* RTL: flip columns so avatar is on the RIGHT */
+.card:dir(rtl) { grid-template-columns: 1fr 72px; }
+
+.avatar {
+    width: 72px; height: 72px;
+    border-radius: 12px; object-fit: cover; background: #f6f6f6;
+}
+.card:dir(rtl) .avatar { justify-self: end; }
+
+.text { align-self: center; }
+
+.name  { text-align: start; font-weight: 800; font-size: 1.05rem; margin: 0 0 4px; }
+.tech  { text-align: start; font-size: .82rem; color: var(--muted, #6b7280); letter-spacing: .04em; }
+.years { text-align: start; font-size: .78rem; color: #8f8f8f; margin-top: 4px; }

@@ -1,0 +1,47 @@
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #6666cc;
+  color: #000;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-size: medium;
+}
+
+.footer aside {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer aside img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.footer nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.footer nav a {
+  cursor: pointer;
+  color: inherit;
+  display: inline-flex;
+  transition: color 0.3s ease;
+}
+
+.footer nav a:hover {
+  color: #059669;
+}
+
+.footer nav svg {
+  fill: currentColor;
+  width: 24px;
+  height: 24px;
+  display: block;
+}

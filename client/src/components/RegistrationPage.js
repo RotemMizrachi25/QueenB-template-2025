@@ -8,8 +8,8 @@ import {
   Tab
 } from '@mui/material';
 import { PersonAdd } from '@mui/icons-material';
-import MentorSignUp from './MentorSignUp';
-import MenteeSignUp from './MenteeSignUp';
+import MentorSignUp from './mentorSignUp';
+import MentitSignUp from './MentitSignUp';
 
 const RegistrationPage = () => {
   const [tabValue, setTabValue] = useState(0); // 0 = Mentor, 1 = Mentee
@@ -47,7 +47,7 @@ const RegistrationPage = () => {
 
             {/* Tab Content */}
             {tabValue === 0 && <MentorSignUp />}
-            {tabValue === 1 && <MenteeSignUp />}
+            {tabValue === 1 && <MentitSignUp />}
           </Box>
         </Paper>
       </Container>

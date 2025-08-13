@@ -8,29 +8,35 @@ import {
 import ProfileUpdate from './components/ProfileUpdate';
 import LoginPage from './components/LoginPage'; // Add this import
 import RegistrationPage from './components/RegistrationPage';
-
+import MentorsListPage from "./pages/MentorsListPage";
+import MentorSignUp from "./components/mentorSignUp";
 
 const theme = createTheme({
+  direction: "rtl",
   palette: {
-    primary: {
-      main: "#6366f1",
-    },
-    secondary: {
-      main: "#ec4899",
-    },
-    background: {
-      default: "#f8fafc",
-    },
+    mode: "light",
+    primary:   { main: "#f43f5e" },
+    secondary: { main: "#fb7185" },
+    background:{ default: "#fff5f7" }
   },
+  shape: { borderRadius: 16 },
   typography: {
-    fontFamily: "Roboto, Arial, sans-serif",
-    h4: {
-      fontWeight: 600,
-    },
-    h6: {
-      fontWeight: 500,
-    },
+    fontFamily: '"Heebo", "Roboto", Arial, sans-serif',
+    h4: { fontWeight: 900 },
+    h6: { fontWeight: 700 }
   },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: { borderRadius: 16, boxShadow: "0 4px 14px rgba(0,0,0,.08)" }
+      }
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: { borderRadius: 12 }
+      }
+    }
+  }
 });
 
 function App() {
@@ -39,10 +45,11 @@ function App() {
       <CssBaseline />
       <Router>
         <Routes>
+          <Route path="/mentorsignup" element={<MentorSignUp />} />
           <Route path="/" element={<LoginPage />} /> {/* Changed this */}
           <Route path="/profile/edit" element={<ProfileUpdate />} />
           <Route path="/register" element={<RegistrationPage />} />
-
+          <Route path="/mentors" element={<MentorsListPage />} />
         </Routes>
       </Router>
     </ThemeProvider>

@@ -1,0 +1,34 @@
+/* client/src/components/SearchBar/SearchBar.module.css */
+
+.wrap{
+    display:grid;
+    grid-template-columns: 1fr auto;
+    gap:12px;
+    align-items:center;
+    margin: 22px 0 18px;
+}
+
+.input{
+    width:100%;
+    padding:14px 16px;
+    border-radius:16px;
+    border:1px solid var(--border, #f1d3da);
+    background:#fff;
+    color:var(--ink, #1f2937);
+    font-family: "Heebo","Roboto",Arial,sans-serif;
+    text-align:start;
+}
+
+.input:dir(rtl){ text-align:right; }
+.input:dir(ltr){ text-align:left;  }
+
+.input::placeholder{ color:var(--muted, #6b7280); }
+
+.button{
+    border:none; border-radius:12px;
+    padding:12px 16px;
+    background:var(--pink-500,#f43f5e); color:#fff; font-weight:600;
+    cursor:pointer; transition:background .12s ease, transform .08s ease;
+}
+.button:hover{ background:var(--pink-600,#e11d48); }
+.button:active{ transform: translateY(1px); }

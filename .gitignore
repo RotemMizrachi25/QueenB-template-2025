@@ -3,8 +3,10 @@ node_modules/
 client/node_modules/
 server/node_modules/
 
+clean
 # Production builds
-client/build/
+client/build
+client/clean
 dist/
 
 # Environment variables

@@ -1,4 +1,5 @@
 // client/src/components/MentorDetails/MentorDetails.js
+// a window opens up when mentee chooses a mentor from homepage
 
 import React, { useEffect, useState } from "react";
 import { fetchMentorById } from "../../api/mentorsApi";
@@ -36,10 +37,17 @@ export default function MentorDetails({ mentorId, onClose }) {
     const contactLabel = isRtlContext ? `צרי קשר עם ${mentor.firstName}` : `Contact ${mentor.firstName}`;
     const yearsLabel   = isRtlContext ? "שנות ניסיון" : "years of experience";
 
-    const avatar   = mentor.avatarUrl || "/avatars/default-female.png";
+    const avatar =
+        mentor.avatarUrl ||
+        mentor.imageUrl ||
+        mentor.image ||
+        mentor.photoURL ||
+        "/programmer.png";
     const mailHref = mentor.email ? `mailto:${mentor.email}` : undefined;
     const telHref  = mentor.phone ? `tel:${mentor.phone}` : undefined;
     const waHref   = mentor.phone ? `https://wa.me/${numbersOnly(mentor.phone)}` : undefined;
+
+    
 
     return (
         <div className={s.backdrop} onClick={onClose}>
@@ -47,7 +55,12 @@ export default function MentorDetails({ mentorId, onClose }) {
             <div className={`${s.panel} ${layoutClass}`} onClick={(e) => e.stopPropagation()}>
                 <button className={s.close} onClick={onClose} aria-label="סגירה">✕</button>
 
-                <img className={s.avatar} src={avatar} alt={fullName} />
+                <img className={s.avatar} src={avatar} alt={fullName} onError={(e) => {
+                        e.currentTarget.onerror = null;   // prevent infinite loop
+                        e.currentTarget.src = "/programmer.png";
+                }
+            }
+            />
 
                 <div className={s.content} dir={textDir}>
                     <div className={s.nameRow}>
@@ -67,6 +80,40 @@ export default function MentorDetails({ mentorId, onClose }) {
                             {mentor.yearsOfExperience} {yearsLabel}
                         </div>
                     )}
+
+                    {(() => {
+                    const toLine = (val) =>
+                        Array.isArray(val) ? val.join(", ") :
+                        (typeof val === "string" ? val : "");
+
+                    const langs = toLine(mentor.programmingLanguages);
+                    const techs = toLine(mentor.technologies);
+                    const domains = toLine(mentor.domains);
+
+                    return (
+                        <>
+                        {langs && (
+                            <div className={s.kv} dir={textDir}>
+                            <span className={s.k}>{isRtlContext ? "שפות תכנות:" : "Programming languages:"}</span>
+                            <span className={s.v}>{langs}</span>
+                            </div>
+                        )}
+                        {techs && (
+                            <div className={s.kv} dir={textDir}>
+                            <span className={s.k}>{isRtlContext ? "טכנולוגיות:" : "Technologies:"}</span>
+                            <span className={s.v}>{techs}</span>
+                            </div>
+                        )}
+                        {domains && (
+                            <div className={s.kv} dir={textDir}>
+                            <span className={s.k}>{isRtlContext ? "תחומים:" : "Domains:"}</span>
+                            <span className={s.v}>{domains}</span>
+                            </div>
+                        )}
+                        </>
+                    );
+                    })()}
+
 
                     {!!aboutText && (() => {
                         const lines = aboutText.split("•").map(l => l.trim()).filter(Boolean);

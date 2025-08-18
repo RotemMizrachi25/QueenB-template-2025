@@ -1,4 +1,5 @@
 // client/src/components/MentorCard/MentorCard.js
+// small box of each mentor in the homepage
 
 import React from "react";
 import s from "./MentorCard.module.css";
@@ -16,9 +17,24 @@ function isRTL(str = "") {
  */
 export default function MentorCard({ mentor, onClick }) {
     const fullName = `${mentor.firstName} ${mentor.lastName}`.trim();
-    const avatar = mentor.avatarUrl || "/avatars/default-female.png";
+    const avatar =
+        mentor.avatarUrl ||
+        mentor.imageUrl ||
+        mentor.image ||
+        mentor.photoURL ||
+        "/programmer.png";
     const cardDir = isRTL(fullName) ? "rtl" : "ltr";
     const yearsLabel = isRTL(fullName) ? "שנות ניסיון" : "years of experience";
+
+    // Decide what to display for years of experience
+    let yearsText = "";
+    if (mentor.yearsOfExperience === 1) {
+    yearsText = isRTL(fullName)
+        ? "שנת ניסיון אחת"
+        : "one year of experience";
+    } else if (typeof mentor.yearsOfExperience === "number") {
+    yearsText = `${mentor.yearsOfExperience} ${yearsLabel}`;
+    }
 
     // Use keyboard accessibility when using a non-button element with role="button"
     const handleKeyDown = (e) => {
@@ -39,13 +55,18 @@ export default function MentorCard({ mentor, onClick }) {
             dir={cardDir}         // logical layout & text direction
         >
             {/* The CSS can flip columns using .card:dir(rtl) if needed */}
-            <img className={s.avatar} src={avatar} alt={fullName} />
+            <img className={s.avatar} src={avatar} alt={fullName} onError={(e) => {
+                                    e.currentTarget.onerror = null;   // prevent infinite loop
+                                    e.currentTarget.src = "/programmer.png";
+                            }
+                        }
+                        />
             <div className={s.text}>
                 <div className={s.name} dir="auto">{fullName}</div>
                 <div className={s.tech} dir="auto">{mentor.headlineTech}</div>
                 {typeof mentor.yearsOfExperience === "number" && (
                     <div className={s.years} dir={cardDir}>
-                        {mentor.yearsOfExperience} {yearsLabel}
+                         {yearsText}
                     </div>
                 )}
             </div>

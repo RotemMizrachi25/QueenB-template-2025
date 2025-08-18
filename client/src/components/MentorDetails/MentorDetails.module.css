@@ -95,3 +95,16 @@
     position:absolute; top:12px; inset-inline-end:12px;
     cursor:pointer; background:transparent; border:none; font-size:18px;
 }
+
+.kv { 
+  margin: 6px 0; 
+  text-align: start; 
+}
+.k  { 
+  font-weight: 700; 
+  margin-inline-end: 6px; 
+}
+.v  { 
+  color: var(--ink, #1f2937); 
+  word-break: break-word; 
+}

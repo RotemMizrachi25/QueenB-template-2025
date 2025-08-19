@@ -7,6 +7,7 @@ import MentorsListPage from "./pages/MentorsListPage";
 import MentorSignUp from "./components/mentorSignUp";
 import Home from "./components/Home";
 import AdminUsersView from './components/AdminUsersView';
+import EmailVerification from './components/EmailVerification'; // NEW
 
 const theme = createTheme({
   direction: "rtl",
@@ -48,6 +49,7 @@ function App() {
           <Route path="/register" element={<RegistrationPage />} />
           <Route path="/mentors" element={<MentorsListPage />} />
           <Route path="/admin/users" element={<AdminUsersView />} />
+          <Route path="/verify-email" element={<EmailVerification />} /> {/* NEW */}
         </Routes>
       </Router>
     </ThemeProvider>

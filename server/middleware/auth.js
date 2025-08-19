@@ -1,3 +1,4 @@
+// server/middleware/auth.js
 const Admin = require("../models/Admin");
 
 const requireAuth = (req, res, next) => {

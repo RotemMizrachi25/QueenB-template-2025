@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import s from "./Header.module.css";
 
+// Helper to detect RTL (Hebrew/Arabic)
+const isRTL = (str = "") => /[\u0590-\u05FF\u0600-\u06FF]/.test(str);
+
 export default function Header() {
   const [user, setUser] = useState(null);
 
@@ -47,6 +50,34 @@ export default function Header() {
     }
   };
 
+  // Pick first name smartly (with fallbacks)
+  const rawFirstName =
+      user?.firstName?.trim() ||
+      user?.name?.trim()?.split(" ")[0] ||
+      user?.profile?.firstName?.trim() ||
+      (user?.email ? user.email.split("@")[0] : "");
+
+  // Detect language direction based on the name
+  const nameIsRTL = isRTL(rawFirstName);
+
+  // Fallback label if first name is missing
+  const typeFallback = user
+      ? user.userType === "mentor"
+          ? (nameIsRTL ? "מנטורית" : "Mentor")
+          : (nameIsRTL ? "מנטית" : "Mentee")
+      : "";
+
+  // Final display name and greeting
+  const displayName = rawFirstName || typeFallback || "";
+  const greeting =
+      displayName.length > 0
+          ? nameIsRTL
+              ? `ברוכה הבאה, ${displayName}!`
+              : `Welcome, ${displayName}!`
+          : nameIsRTL
+              ? "ברוכה הבאה!"
+              : "Welcome!";
+
   return (
     <header className={s.bar}>
       <div className={s.container}>
@@ -61,8 +92,9 @@ export default function Header() {
           {user ? (
             // Show sign out when logged in
             <div className={s.userSection}>
-              <span className={s.welcomeText}>
-                Welcome, {user.userType === 'mentor' ? 'Mentor' : 'Mentee'}!
+              {/* Dynamic greeting by name & language */}
+              <span className={s.welcomeText} dir={nameIsRTL ? "rtl" : "ltr"}>
+                {greeting}
               </span>
               <button 
                 onClick={handleSignOut}

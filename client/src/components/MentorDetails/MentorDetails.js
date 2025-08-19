@@ -6,32 +6,35 @@ import { fetchMentorById } from "../../api/mentorsApi";
 import s from "./MentorDetails.module.css";
 import { MailIcon, PhoneIcon, WhatsappIcon, LinkedinIcon } from "../Icons";
 
-// Detect RTL (Hebrew/Arabic)
-function isRTL(str = "") {
-    return /[\u0590-\u05FF\u0600-\u06FF]/.test(str);
-}
+import {
+    toE164NoPlusIL,
+    buildEmailTemplate,
+    buildWhatsappTemplate,
+    gmailComposeHref,
+    waHref,
+    openWhatsAppWeb,
+    openWhatsAppApp,
+} from "../../utils/contactTemplates";
 
-// Keep only digits (WhatsApp)
-function numbersOnly(x) {
-    return (x || "").replace(/[^\d]/g, "");
-}
+import useAuthUser from "../../hooks/useAuthUser";
+
+function isRTL(str = "") { return /[\u0590-\u05FF\u0600-\u06FF]/.test(str); }
 
 export default function MentorDetails({ mentorId, onClose }) {
     const [mentor, setMentor] = useState(null);
+    const { user: currentUser } = useAuthUser();
+    const [showWaMenu, setShowWaMenu] = useState(false);
 
-    useEffect(() => {
-        fetchMentorById(mentorId).then(setMentor);
-    }, [mentorId]);
+    useEffect(() => { fetchMentorById(mentorId).then(setMentor); }, [mentorId]);
 
     if (!mentor) return null;
 
-    const fullName  = `${mentor.firstName} ${mentor.lastName}`.trim();
+    const fullName  = [mentor.firstName, mentor.lastName].filter(Boolean).join(" ").trim() || "Mentor";
     const aboutText = mentor.about || "";
 
-    // RTL context if the description or the name is Hebrew/Arabic
     const isRtlContext = isRTL(aboutText) || isRTL(fullName);
-    const textDir      = isRtlContext ? "rtl" : "ltr"; // for alignment inside blocks
-    const layoutClass  = isRtlContext ? s.rtl : s.ltr; // flips avatar/content sides
+    const textDir      = isRtlContext ? "rtl" : "ltr";
+    const layoutClass  = isRtlContext ? s.rtl : s.ltr;
 
     const aboutLabel   = isRtlContext ? `על ${mentor.firstName}` : `About ${mentor.firstName}`;
     const contactLabel = isRtlContext ? `צרי קשר עם ${mentor.firstName}` : `Contact ${mentor.firstName}`;
@@ -51,7 +54,6 @@ export default function MentorDetails({ mentorId, onClose }) {
 
     return (
         <div className={s.backdrop} onClick={onClose}>
-            {/* layoutClass controls where the image sits (right for RTL, left for LTR) */}
             <div className={`${s.panel} ${layoutClass}`} onClick={(e) => e.stopPropagation()}>
                 <button className={s.close} onClick={onClose} aria-label="סגירה">✕</button>
 
@@ -72,7 +74,6 @@ export default function MentorDetails({ mentorId, onClose }) {
                         <div className={s.name} dir="auto">{fullName}</div>
                     </div>
 
-                    {/* Force headline to follow the page direction (right in RTL, left in LTR) */}
                     <div className={s.head} dir={textDir}>{mentor.headlineTech}</div>
 
                     {typeof mentor.yearsOfExperience === "number" && (
@@ -129,11 +130,89 @@ export default function MentorDetails({ mentorId, onClose }) {
 
                     <div className={s.contactTitle}>{contactLabel}</div>
                     <div className={s.row}>
-                        {mailHref && <a className={s.iconBtn} href={mailHref} aria-label="Email"><MailIcon /></a>}
-                        {telHref  && <a className={s.iconBtn} href={telHref}  aria-label="Phone"><PhoneIcon /></a>}
-                        {waHref   && <a className={s.iconBtn} href={waHref}   aria-label="WhatsApp"><WhatsappIcon /></a>}
+                        {emailHref && (
+                            <a
+                                className={s.iconBtn}
+                                href={emailHref}
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={(e) => { e.stopPropagation(); }}
+                                aria-label="Email"
+                            >
+                                <MailIcon />
+                            </a>
+                        )}
+
+                        {phoneHref && (
+                            <a
+                                className={s.iconBtn}
+                                href={phoneHref}
+                                onClick={(e) => { e.stopPropagation(); }}
+                                aria-label="Phone"
+                            >
+                                <PhoneIcon />
+                            </a>
+                        )}
+
+                        {waHrefFinal && (
+                            <div className={s.waGroup} style={{ position: "relative", display: "inline-block" }}>
+                                <a
+                                    className={s.iconBtn}
+                                    href={waHrefFinal}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    onClick={(e) => { e.stopPropagation(); e.preventDefault(); setShowWaMenu(v => !v); }}
+                                    aria-label="WhatsApp"
+                                >
+                                    <WhatsappIcon />
+                                </a>
+
+                                {showWaMenu && (
+                                    <div
+                                        role="menu"
+                                        className={s.waMenu}
+                                        style={{
+                                            position: "absolute",
+                                            top: "48px",
+                                            insetInlineStart: 0,
+                                            background: "#fff",
+                                            border: "1px solid #f1d3da",
+                                            borderRadius: 10,
+                                            boxShadow: "0 6px 18px rgba(0,0,0,.12)",
+                                            padding: 8,
+                                            zIndex: 20,
+                                            minWidth: 160
+                                        }}
+                                    >
+                                        <button
+                                            type="button"
+                                            onClick={async (e) => {
+                                                e.stopPropagation();
+                                                await openWhatsAppWeb(phoneE164NoPlus, waText);
+                                                setShowWaMenu(false);
+                                            }}
+                                            style={{ display: "block", width: "100%", background: "transparent", border: "none", padding: "8px 10px", cursor: "pointer", textAlign: "start" }}
+                                        >
+                                            Open in Web
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={async (e) => {
+                                                e.stopPropagation();
+                                                await openWhatsAppApp(phoneE164NoPlus, waText);
+                                                setShowWaMenu(false);
+                                            }}
+                                            style={{ display: "block", width: "100%", background: "transparent", border: "none", padding: "8px 10px", cursor: "pointer", textAlign: "start" }}
+                                        >
+                                            Open in App
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
                         {mentor.linkedinUrl && (
-                            <a className={s.iconBtn} href={mentor.linkedinUrl} target="_blank" rel="noreferrer" aria-label="LinkedIn">
+                            <a className={s.iconBtn} href={mentor.linkedinUrl} target="_blank" rel="noreferrer" aria-label="LinkedIn" onClick={(e)=>e.stopPropagation()}>
                                 <LinkedinIcon />
                             </a>
                         )}

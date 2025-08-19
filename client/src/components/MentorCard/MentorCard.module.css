@@ -40,50 +40,10 @@
   object-fit: cover;
   background: #f6f6f6;
 }
+.card:dir(rtl) .avatar { justify-self: end; }
 
-/* In RTL, keep the avatar pinned to the outer edge */
-.card:dir(rtl) .avatar {
-  justify-self: right;
-}
+.text { align-self: center; }
 
-/* Text column: allow shrinking so ellipsis works and text sits next to image */
-.text {
-  align-self: center;
-  min-width: 0; /* critical for grid + ellipsis */
-}
-
-/* Name (first line) */
-.name {
-  text-align: start;          /* LTR: left, RTL: right (via :dir below) */
-  font-weight: 800;
-  font-size: 1.05rem;
-  margin: 0 0 4px;
-
-  white-space: nowrap;        /* keep in one line */
-  overflow: hidden;
-  text-overflow: ellipsis;    /* show … if too long */
-}
-
-/* Secondary lines */
-.tech {
-  text-align: start;
-  font-size: .82rem;
-  color: var(--muted, #6b7280);
-  letter-spacing: .04em;
-}
-
-.years {
-  text-align: start;
-  font-size: .78rem;
-  color: #8f8f8f;
-  margin-top: 4px;
-}
-
-
-
-/* Direction-specific text alignment */
-.card:dir(rtl) .name,
-.card:dir(rtl) .tech,
-.card:dir(rtl) .years {
-  text-align: right;
-}
+.name  { text-align: start; font-weight: 800; font-size: 1.05rem; margin: 0 0 4px; }
+.tech  { text-align: start; font-size: .82rem; color: var(--muted, #6b7280); letter-spacing: .04em; }
+.years { text-align: start; font-size: .78rem; color: #8f8f8f; margin-top: 4px; }
